@@ -1,0 +1,9 @@
+sqlalchemy
+psycopg2-binary
+pymysql
+settings-helper
+
+# For development
+ipython
+pdbpp
+pytest
