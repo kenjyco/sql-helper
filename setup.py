@@ -16,9 +16,9 @@ setup(
     download_url='https://github.com/kenjyco/sql-helper/tarball/v0.0.1',
     packages=find_packages(),
     install_requires=[
-        'sqlalchemy',
-        'psycopg2-binary',
-        'pymysql',
+        'SQLAlchemy==1.3.2',
+        'psycopg2-binary==2.8.1',
+        'PyMySQL==0.9.3',
         'settings-helper',
     ],
     include_package_data=True,
