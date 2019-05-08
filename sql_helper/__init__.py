@@ -41,11 +41,23 @@ class SQL(object):
         return self._engine.execute(text(query))
 
     def execute(self, query):
-        """Pass query to SQL engine and return a list of dicts or empty list"""
-        return [
-            dict(row.items())
-            for row in self._execute_raw(query).fetchall()
-        ]
+        """Pass query to SQL engine and return a list of dicts, list, or empty list
+
+        If first result from query only has 1 column, a simple list is returned;
+        if there are multiple columns, a list of dicts is returned
+        """
+        cursor = self._execute_raw(query)
+        results = []
+        first = cursor.fetchone()
+        others = cursor.fetchall()
+        num_columns = len(first)
+        if num_columns == 1:
+            results.append(first[0])
+            results.extend([row[0] for row in others])
+        elif num_columns > 1:
+            results.append(dict(first.items()))
+            results.extend([dict(row.items()) for row in others])
+        return results
 
     def _get_postgresql_tables(self):
         results = self.execute(
