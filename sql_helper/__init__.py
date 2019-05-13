@@ -1,7 +1,6 @@
 import re
-import sqlalchemy
 import settings_helper as sh
-from sqlalchemy import text
+from sqlalchemy import create_engine, text, inspect
 from sqlalchemy.exc import ResourceClosedError
 
 
@@ -17,12 +16,13 @@ class SQL(object):
 
         - url: connection url to a SQL db
 
-        Other kwargs passed in will be passed to sqlalchemyy.create_engine as
+        Other kwargs passed in will be passed to sqlalchemy.create_engine as
         connect_args
         """
         connect_args['connect_timeout'] = connect_timeout
         url = self._fix_mysql_url(url)
-        self._engine = sqlalchemy.create_engine(url, connect_args=connect_args)
+        self._engine = create_engine(url, connect_args=connect_args)
+        self._inspector = inspect(self._engine)
         if self._engine.url.drivername.startswith('postgresql'):
             self._type = 'postgresql'
         elif self._engine.url.drivername.startswith('mysql'):
@@ -91,3 +91,21 @@ class SQL(object):
             return self._get_postgresql_tables()
         elif self._type == 'mysql':
             return self._get_mysql_tables()
+
+    def get_columns(self, table, schema=None, **kwargs):
+        """Return a list of dicts containing info about columns for table
+
+        Additional kwargs are passed to self._inspector.get_columns
+        """
+        if '.' in table and schema is None:
+            schema, table = table.split('.', 1)
+        return self._inspector.get_columns(table, schema=schema, **kwargs)
+
+    def get_indexes(self, table, schema=None, **kwargs):
+        """Return a list of dicts containing info about indexes for table
+
+        Additional kwargs are passed to self._inspector.get_indexes
+        """
+        if '.' in table and schema is None:
+            schema, table = table.split('.', 1)
+        return self._inspector.get_indexes(table, schema=schema, **kwargs)
