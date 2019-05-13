@@ -2,6 +2,7 @@ import re
 import sqlalchemy
 import settings_helper as sh
 from sqlalchemy import text
+from sqlalchemy.exc import ResourceClosedError
 
 
 get_setting = sh.settings_getter(__name__)
@@ -48,7 +49,16 @@ class SQL(object):
         """
         cursor = self._execute_raw(query)
         results = []
-        first = cursor.fetchone()
+        try:
+            first = cursor.fetchone()
+        except ResourceClosedError as err:
+            if 'result object does not return rows' in repr(err):
+                return results
+            else:
+                raise
+        if first is None:
+            return results
+
         others = cursor.fetchall()
         num_columns = len(first)
         if num_columns == 1:
