@@ -102,6 +102,8 @@ class SQL(object):
             return self._get_postgresql_tables()
         elif self._type == 'mysql':
             return self._get_mysql_tables()
+        else:
+            return self._engine.table_names()
 
     def get_columns(self, table, schema=None, **kwargs):
         """Return a list of dicts containing info about columns for table
