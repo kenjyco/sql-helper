@@ -2,6 +2,7 @@ import re
 import settings_helper as sh
 from sqlalchemy import create_engine, text, inspect
 from sqlalchemy.exc import ResourceClosedError
+from os.path import isfile
 
 
 get_setting = sh.settings_getter(__name__)
@@ -38,11 +39,22 @@ class SQL(object):
         return url
 
     def _execute_raw(self, query):
-        """Pass query to SQL engine and return object before fetchall/fetchone"""
+        """Pass query to SQL engine and return object before fetchall/fetchone
+
+        - query: a string or path to a sql script
+        """
+        if isfile(query):
+            with open(query, 'r') as fp:
+                script_contents = fp.read()
+            with self._engine.begin() as conn:
+                res = conn.execute(text(script_contents))
+            return res
         return self._engine.execute(text(query))
 
     def execute(self, query):
         """Pass query to SQL engine and return a list of dicts, list, or empty list
+
+        - query: a string or path to a sql script
 
         If first result from query only has 1 column, a simple list is returned;
         if there are multiple columns, a list of dicts is returned
