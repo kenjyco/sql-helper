@@ -94,8 +94,7 @@ class SQL(object):
         ]
 
     def _get_mysql_tables(self):
-        results = self._execute_raw("show tables")
-        return [r[0] for r in results.fetchall()]
+        return self.execute("show tables")
 
     def get_tables(self):
         """Return a list of table names (or schema.tablename strings)"""
