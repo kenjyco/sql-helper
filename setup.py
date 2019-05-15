@@ -6,14 +6,14 @@ with open('README.rst', 'r') as fp:
 
 setup(
     name='sql-helper',
-    version='0.0.4',
+    version='0.0.5',
     description='Helper funcs and tools for working with SQL in mysql or postgresql',
     long_description=long_description,
     author='Ken',
     author_email='kenjyco@gmail.com',
     license='MIT',
     url='https://github.com/kenjyco/sql-helper',
-    download_url='https://github.com/kenjyco/sql-helper/tarball/v0.0.4',
+    download_url='https://github.com/kenjyco/sql-helper/tarball/v0.0.5',
     packages=find_packages(),
     install_requires=[
         'SQLAlchemy==1.3.2',
