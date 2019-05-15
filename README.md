@@ -28,3 +28,27 @@ In [3]: table_names = sql.get_tables()
 
 In [4]: results = sql.execute('SELECT ...')
 ```
+
+## Extra
+
+### [Redshift](https://aws.amazon.com/redshift/)
+
+> Ensure the `pg_config` executable is on the system
+
+```
+$ sudo apt-get install -y libpq-dev
+
+or
+
+$ brew install postgresql
+```
+
+Then install `sqlalchemy-redshift` wherever you installed `sql-helper`
+
+```
+$ venv/bin/pip3 install sqlalchemy-redshift
+```
+
+Connect with DB url in the following format:
+
+- `redshift+psycopg2://someuser:somepassword@somehost/somedatabase`

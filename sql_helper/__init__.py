@@ -25,7 +25,10 @@ class SQL(object):
         url = self._fix_mysql_url(url)
         self._engine = create_engine(url, connect_args=connect_args)
         self._inspector = inspect(self._engine)
-        if self._engine.url.drivername.startswith('postgresql'):
+        if (
+            self._engine.url.drivername.startswith('postgresql') or
+            self._engine.url.drivername == 'redshift+psycopg2'
+        ):
             self._type = 'postgresql'
         elif self._engine.url.drivername.startswith('mysql'):
             self._type = 'mysql'
