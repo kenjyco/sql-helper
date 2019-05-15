@@ -2,6 +2,7 @@ import re
 import settings_helper as sh
 from sqlalchemy import create_engine, text, inspect
 from sqlalchemy.exc import ResourceClosedError
+from sqlalchemy.sql import sqltypes
 from os.path import isfile
 
 
@@ -122,3 +123,27 @@ class SQL(object):
         if '.' in table and schema is None:
             schema, table = table.split('.', 1)
         return self._inspector.get_indexes(table, schema=schema, **kwargs)
+
+    def get_timestamp_columns(self, table, schema=None, name_only=False, **kwargs):
+        """Return a list columns that are DATE, DATETIME, TIME, or TIMESTAMP
+
+        - name_only: if True, only return the names of columns, not full dict of
+          info per column
+
+        Additional args/kwargs are passed to self.get_columns
+        """
+        columns = self.get_columns(table, schema=schema, **kwargs)
+        results = []
+        getter = lambda x: x
+        if name_only:
+            getter = lambda x: x['name']
+        for column in columns:
+            if (
+                isinstance(column['type'], sqltypes.DATE) or
+                isinstance(column['type'], sqltypes.DATETIME) or
+                isinstance(column['type'], sqltypes.TIME) or
+                isinstance(column['type'], sqltypes.TIMESTAMP)
+            ):
+                results.append(getter(column))
+
+        return results
