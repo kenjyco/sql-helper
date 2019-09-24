@@ -198,3 +198,20 @@ class SQL(object):
                 results.append(getter(column))
 
         return results
+
+    def insert(self, table, data):
+        """Insert data to table and return generated statement
+
+        - data: dict or list of dicts
+        """
+        try:
+            keys = data.keys()
+        except AttributeError:
+            keys = data[0].keys()
+
+        statement_start = 'insert into {} ('.format(table)
+        statement_cols = ', '.join(keys) + ') values ('
+        statement_vals = ', '.join([':{}'.format(k) for k in keys]) + ')'
+        statement = statement_start + statement_cols + statement_vals
+        self._execute_raw(statement, data)
+        return statement
