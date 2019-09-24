@@ -160,3 +160,41 @@ class SQL(object):
                 results.append(getter(column))
 
         return results
+
+    def get_autoincrement_columns(self, table, schema=None, name_only=False, **kwargs):
+        """Return a list columns that autoincrement
+
+        - name_only: if True, only return the names of columns, not full dict of
+          info per column
+
+        Additional args/kwargs are passed to self.get_columns
+        """
+        columns = self.get_columns(table, schema=schema, **kwargs)
+        results = []
+        getter = lambda x: x
+        if name_only:
+            getter = lambda x: x['name']
+        for column in columns:
+            if column['autoincrement'] is True:
+                results.append(getter(column))
+
+        return results
+
+    def get_required_columns(self, table, schema=None, name_only=False, **kwargs):
+        """Return a list columns that are required
+
+        - name_only: if True, only return the names of columns, not full dict of
+          info per column
+
+        Additional args/kwargs are passed to self.get_columns
+        """
+        columns = self.get_columns(table, schema=schema, **kwargs)
+        results = []
+        getter = lambda x: x
+        if name_only:
+            getter = lambda x: x['name']
+        for column in columns:
+            if column['nullable'] is False and column['default'] is None:
+                results.append(getter(column))
+
+        return results
