@@ -42,28 +42,38 @@ class SQL(object):
             url = 'mysql+pymysql://' + match.group(1)
         return url
 
-    def _execute_raw(self, query):
-        """Pass query to SQL engine and return object before fetchall/fetchone
+    def _execute_raw(self, statement, params={}):
+        """Pass statement to SQL engine and return object before fetchall/fetchone
 
-        - query: a string or path to a sql script
+        - statement: a string or path to a sql script
+        - params: dict or list of dicts containing any :param names in string statement
         """
-        if isfile(query):
-            with open(query, 'r') as fp:
+        if isfile(statement):
+            with open(statement, 'r') as fp:
                 script_contents = fp.read()
             with self._engine.begin() as conn:
                 res = conn.execute(text(script_contents))
             return res
-        return self._engine.execute(text(query))
 
-    def execute(self, query):
-        """Pass query to SQL engine and return a list of dicts, list, or empty list
+        with self._engine.begin() as conn:
+            res = conn.execute(text(statement), params)
+        return res
 
-        - query: a string or path to a sql script
+    def execute(self, statement, params={}):
+        """Pass statement to SQL engine and return a list of dicts, or list
 
-        If first result from query only has 1 column, a simple list is returned;
-        if there are multiple columns, a list of dicts is returned
+        - statement: a string or path to a sql script
+        - params: dict or list of dicts containing any :param names in string
+          statement
+
+        If the result returns rows of info and the first result only has 1
+        column, a simple list is returned; if there are multiple columns, a
+        list of dicts is returned
+
+        If the result does not return rows, or result set is empty, an empty
+        list is returned
         """
-        cursor = self._execute_raw(query)
+        cursor = self._execute_raw(statement, params)
         results = []
         try:
             first = cursor.fetchone()
