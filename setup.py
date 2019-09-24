@@ -6,20 +6,21 @@ with open('README.rst', 'r') as fp:
 
 setup(
     name='sql-helper',
-    version='0.0.5',
+    version='0.0.6',
     description='Helper funcs and tools for working with SQL in mysql or postgresql',
     long_description=long_description,
     author='Ken',
     author_email='kenjyco@gmail.com',
     license='MIT',
     url='https://github.com/kenjyco/sql-helper',
-    download_url='https://github.com/kenjyco/sql-helper/tarball/v0.0.5',
+    download_url='https://github.com/kenjyco/sql-helper/tarball/v0.0.6',
     packages=find_packages(),
     install_requires=[
         'SQLAlchemy==1.3.2',
         'psycopg2-binary==2.8.1',
         'PyMySQL==0.9.3',
         'settings-helper',
+        'bg-helper',
     ],
     include_package_data=True,
     package_dir={'': '.'},
