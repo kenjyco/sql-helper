@@ -95,6 +95,20 @@ class SQL(object):
             results.extend([dict(row.items()) for row in others])
         return results
 
+    def call_procedure(self, procedure, list_of_params=[]):
+        """Call the stored procedure with specified params"""
+        raw_conn = self._engine.raw_connection()
+        results = None
+        try:
+            cursor = raw_conn.cursor()
+            cursor.callproc(procedure, list_of_params)
+            results = list(cursor.fetchall())
+            cursor.close()
+            raw_conn.commit()
+        finally:
+            raw_conn.close()
+        return results
+
     def _get_postgresql_tables(self):
         results = self.execute(
             "SELECT schemaname, tablename "
