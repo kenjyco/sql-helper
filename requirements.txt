@@ -2,8 +2,3 @@ SQLAlchemy==1.3.2
 psycopg2-binary==2.8.1
 PyMySQL==0.9.3
 settings-helper
-
-# For development
-ipython
-pdbpp
-pytest
