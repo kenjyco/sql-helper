@@ -109,6 +109,86 @@ class SQL(object):
             raw_conn.close()
         return results
 
+    def _get_postgresql_procedure_names(self, schema='', sort=False):
+        if schema:
+            statement = (
+                "SELECT proname "
+                "FROM pg_catalog.pg_namespace n "
+                "JOIN pg_catalog.pg_proc p on pronamespace = n.oid "
+                "WHERE nspname = '{}'".format(schema)
+            )
+            if sort:
+                statement += " ORDER BY proname"
+        else:
+            statement = (
+                "SELECT proname, nspname "
+                "FROM pg_catalog.pg_namespace n "
+                "JOIN pg_catalog.pg_proc p on pronamespace = n.oid "
+                "WHERE nspname NOT IN ('pg_catalog', 'information_schema')"
+            )
+            if sort:
+                statement += " ORDER BY nspname, proname"
+        return self.execute(statement)
+
+    def _get_mysql_procedure_names(self, sort=False):
+        results = self.execute(
+            "SELECT routine_name "
+            "FROM information_schema.routines "
+            "WHERE routine_type = 'PROCEDURE'"
+        )
+        if sort:
+            results = sorted(results)
+        return results
+
+    def get_procedure_names(self, schema='', sort=False):
+        """Return a list of procedure names
+
+        - schema: name of schema (postgresql only)
+        - sort: if True, results will be sorted by name (or by schema then name
+          if postgresql and no schema specified)
+        """
+        if self._type == 'postgresql':
+            return self._get_postgresql_procedure_names(schema=schema, sort=sort)
+        elif self._type == 'mysql':
+            return self._get_mysql_procedure_names(sort=sort)
+        else:
+            return []
+
+    def _get_postgresql_procedure_code(self, procedure):
+        return ''.join(self.execute(
+            "SELECT prosrc FROM pg_proc "
+            "WHERE proname = '{}'".format(procedure)
+        ))
+
+    def _get_mysql_procedure_code(self, procedure):
+        return b''.join(self.execute(
+            "SELECT body FROM mysql.proc "
+            "WHERE name = '{}'".format(procedure)
+        )).decode('utf-8')
+
+    def get_procedure_code(self, procedure):
+        """Return a string with definition of stored procedure"""
+        if self._type == 'postgresql':
+            return self._get_postgresql_procedure_code(procedure)
+        elif self._type == 'mysql':
+            return self._get_mysql_procedure_code(procedure)
+        else:
+            return ''
+
+    def get_schemas(self, sort=False):
+        """Return a list of schemas (postgresql only)
+
+        - sort: if True, results will be sorted by name
+        """
+        results = []
+        if self._type == 'postgresql':
+            results = self.execute(
+                "SELECT schema_name FROM information_schema.schemata"
+            )
+        if sort:
+            results = sorted(results)
+        return results
+
     def _get_postgresql_tables(self):
         results = self.execute(
             "SELECT schemaname, tablename "
