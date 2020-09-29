@@ -256,19 +256,23 @@ class SQL(object):
             results = sorted(results, key=lambda x: x['name'])
         return results
 
-    def get_timestamp_columns(self, table, schema=None, name_only=False, **kwargs):
+    def get_timestamp_columns(self, table, schema=None, name_only=False,
+                              sort=False, **kwargs):
         """Return a list columns that are DATE, DATETIME, TIME, or TIMESTAMP
 
         - name_only: if True, only return the names of columns, not full dict of
           info per column
+        - sort: if True, results will be sorted by name
 
-        Additional args/kwargs are passed to self.get_columns
+        Additional kwargs are passed to self.get_columns
         """
         columns = self.get_columns(table, schema=schema, **kwargs)
         results = []
         getter = lambda x: x
+        sortkey = lambda x: x['name']
         if name_only:
             getter = lambda x: x['name']
+            sortkey = lambda x: x
         for column in columns:
             if (
                 isinstance(column['type'], sqltypes.DATE) or
@@ -278,44 +282,83 @@ class SQL(object):
             ):
                 results.append(getter(column))
 
+        if sort:
+            results = sorted(results, key=sortkey)
         return results
 
-    def get_autoincrement_columns(self, table, schema=None, name_only=False, **kwargs):
-        """Return a list columns that autoincrement
+    def get_autoincrement_columns(self, table, schema=None, name_only=False,
+                                  sort=False, **kwargs):
+        """Return a list of dicts containing info about autoincrement columns
 
         - name_only: if True, only return the names of columns, not full dict of
           info per column
+        - sort: if True, results will be sorted by name
 
-        Additional args/kwargs are passed to self.get_columns
+        Additional kwargs are passed to self.get_columns
         """
         columns = self.get_columns(table, schema=schema, **kwargs)
         results = []
         getter = lambda x: x
+        sortkey = lambda x: x['name']
         if name_only:
             getter = lambda x: x['name']
+            sortkey = lambda x: x
         for column in columns:
-            if column['autoincrement'] is True:
+            if column.get('autoincrement') is True:
                 results.append(getter(column))
 
+        if sort:
+            results = sorted(results, key=sortkey)
         return results
 
-    def get_required_columns(self, table, schema=None, name_only=False, **kwargs):
-        """Return a list columns that are required
+    def get_required_columns(self, table, schema=None, name_only=False,
+                             sort=False, **kwargs):
+        """Return a list of dicts containing info about required columns
 
         - name_only: if True, only return the names of columns, not full dict of
           info per column
+        - sort: if True, results will be sorted by name
 
-        Additional args/kwargs are passed to self.get_columns
+        Additional kwargs are passed to self.get_columns
         """
         columns = self.get_columns(table, schema=schema, **kwargs)
         results = []
         getter = lambda x: x
+        sortkey = lambda x: x['name']
         if name_only:
             getter = lambda x: x['name']
+            sortkey = lambda x: x
         for column in columns:
             if column['nullable'] is False and column['default'] is None:
                 results.append(getter(column))
 
+        if sort:
+            results = sorted(results, key=sortkey)
+        return results
+
+    def get_non_nullable_columns(self, table, schema=None, name_only=False,
+                             sort=False, **kwargs):
+        """Return a list of dicts containing info about non-nullable columns
+
+        - name_only: if True, only return the names of columns, not full dict of
+          info per column
+        - sort: if True, results will be sorted by name
+
+        Additional kwargs are passed to self.get_columns
+        """
+        columns = self.get_columns(table, schema=schema, **kwargs)
+        results = []
+        getter = lambda x: x
+        sortkey = lambda x: x['name']
+        if name_only:
+            getter = lambda x: x['name']
+            sortkey = lambda x: x
+        for column in columns:
+            if column['nullable'] is False:
+                results.append(getter(column))
+
+        if sort:
+            results = sorted(results, key=sortkey)
         return results
 
     def insert(self, table, data):
