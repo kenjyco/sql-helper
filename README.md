@@ -5,8 +5,8 @@ data out (super light wrapper to SQLAlchemy).
 
 Connect with DB url in the following formats:
 
-- `postgresql://someuser:somepassword@somehost/somedatabase`
-- `mysql://someuser:somepassword@somehost/somedatabase`
+- `postgresql://someuser:somepassword@somehost[:someport]/somedatabase`
+- `mysql://someuser:somepassword@somehost[:someport]/somedatabase`
 
 > Note: This package uses `pymysql` driver for connecting to mysql. Urls that
 > start with `mysql://` will automatically be changed to use `mysql+pymysql://`.

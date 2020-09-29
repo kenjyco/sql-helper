@@ -17,6 +17,8 @@ class SQL(object):
         """An instance that can execute SQL statements on a SQL db (mysql/postgresql)
 
         - url: connection url to a SQL db
+            - postgresql://someuser:somepassword@somehost[:someport]/somedatabase
+            - mysql://someuser:somepassword@somehost[:someport]/somedatabase
 
         Other kwargs passed in will be passed to sqlalchemy.create_engine as
         connect_args
