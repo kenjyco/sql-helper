@@ -213,23 +213,48 @@ class SQL(object):
         else:
             return self._engine.table_names()
 
-    def get_columns(self, table, schema=None, **kwargs):
+    def _get_postgresql_indexes(self, table, schema=None):
+        if '.' in table and schema is None:
+            schema, table = table.split('.', 1)
+        query = (
+            "SELECT * "
+            "FROM pg_indexes "
+            "WHERE tablename = :table "
+            "ORDER BY schemaname, tablename, indexname"
+        )
+        results = self.execute(query, {'table': table})
+        return results
+
+    def _get_mysql_indexes(self, table):
+        results = self.execute("SHOW INDEXES FROM {}".format(table))
+        return results
+
+    def get_indexes(self, table, schema=None):
+        """Return a list of dicts containing info about indexes for table"""
+        if self._type == 'postgresql':
+            return self._get_postgresql_indexes(table, schema)
+        elif self._type == 'mysql':
+            return self._get_mysql_indexes(table)
+
+    def get_columns(self, table, schema=None, name_only=False, sort=False, **kwargs):
         """Return a list of dicts containing info about columns for table
+
+        - name_only: if True, only return the names of columns, not full dict of
+          info per column
+        - sort: if True, results will be sorted by name
 
         Additional kwargs are passed to self._inspector.get_columns
         """
         if '.' in table and schema is None:
             schema, table = table.split('.', 1)
-        return self._inspector.get_columns(table, schema=schema, **kwargs)
-
-    def get_indexes(self, table, schema=None, **kwargs):
-        """Return a list of dicts containing info about indexes for table
-
-        Additional kwargs are passed to self._inspector.get_indexes
-        """
-        if '.' in table and schema is None:
-            schema, table = table.split('.', 1)
-        return self._inspector.get_indexes(table, schema=schema, **kwargs)
+        results = self._inspector.get_columns(table, schema=schema, **kwargs)
+        if name_only:
+            results = [col['name'] for col in results]
+            if sort:
+                results = sorted(results)
+        elif sort:
+            results = sorted(results, key=lambda x: x['name'])
+        return results
 
     def get_timestamp_columns(self, table, schema=None, name_only=False, **kwargs):
         """Return a list columns that are DATE, DATETIME, TIME, or TIMESTAMP
