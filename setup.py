@@ -6,14 +6,14 @@ with open('README.rst', 'r') as fp:
 
 setup(
     name='sql-helper',
-    version='0.0.7',
+    version='0.0.8',
     description='Helper funcs and tools for working with SQL in mysql or postgresql',
     long_description=long_description,
     author='Ken',
     author_email='kenjyco@gmail.com',
     license='MIT',
     url='https://github.com/kenjyco/sql-helper',
-    download_url='https://github.com/kenjyco/sql-helper/tarball/v0.0.7',
+    download_url='https://github.com/kenjyco/sql-helper/tarball/v0.0.8',
     packages=find_packages(),
     install_requires=[
         'PyMySQL==0.9.3',
