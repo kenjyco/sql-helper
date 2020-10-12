@@ -18,6 +18,18 @@ Connect with DB url in the following formats:
 Install
 -------
 
+   Ensure the ``pg_config`` executable is on the system
+
+::
+
+   $ sudo apt-get install -y libpq-dev
+
+   or
+
+   $ brew install postgresql
+
+Then install sql-helper
+
 ::
 
    $ pip3 install sql-helper
@@ -41,18 +53,7 @@ Extra
 `Redshift <https://aws.amazon.com/redshift/>`__
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   Ensure the ``pg_config`` executable is on the system
-
-::
-
-   $ sudo apt-get install -y libpq-dev
-
-   or
-
-   $ brew install postgresql
-
-Then install ``sqlalchemy-redshift`` wherever you installed
-``sql-helper``
+Install ``sqlalchemy-redshift`` wherever you installed ``sql-helper``
 
 ::
 
