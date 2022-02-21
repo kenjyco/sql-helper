@@ -1,12 +1,13 @@
 ## About
 
-This is meant to be a simple way to explore a postgresql/mysql database and get
-data out (super light wrapper to SQLAlchemy).
+This is meant to be a simple way to explore a postgresql/mysql/sqlite database
+and get data out (super light wrapper to SQLAlchemy).
 
 Connect with DB url in the following formats:
 
 - `postgresql://someuser:somepassword@somehost[:someport]/somedatabase`
 - `mysql://someuser:somepassword@somehost[:someport]/somedatabase`
+- `sqlite:///somedb.db`
 
 > Note: This package uses `pymysql` driver for connecting to mysql. Urls that
 > start with `mysql://` will automatically be changed to use `mysql+pymysql://`.

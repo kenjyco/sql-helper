@@ -19,11 +19,19 @@ class SQL(object):
         - url: connection url to a SQL db
             - postgresql://someuser:somepassword@somehost[:someport]/somedatabase
             - mysql://someuser:somepassword@somehost[:someport]/somedatabase
+            - sqlite:///somedb.db
+            - redshift+psycopg2://someuser:somepassword@somehost/somedatabase
+                - You must install the `sqlalchemy-redshift` package wherever you
+                  installed `sql-helper` to connect to a redshift instance
 
         Other kwargs passed in will be passed to sqlalchemy.create_engine as
         connect_args
         """
-        connect_args['connect_timeout'] = connect_timeout
+        if url.startswith('sqlite://'):
+            connect_args['timeout'] = connect_timeout
+        else:
+            connect_args['connect_timeout'] = connect_timeout
+
         url = self._fix_mysql_url(url)
         self._engine = create_engine(url, connect_args=connect_args)
         self._inspector = inspect(self._engine)
