@@ -7,7 +7,7 @@ with open('README.rst', 'r') as fp:
 setup(
     name='sql-helper',
     version='0.0.9',
-    description='Helper funcs and tools for working with SQL in mysql or postgresql',
+    description='Helper funcs and tools for working with SQL in mysql, postgresql, and more',
     long_description=long_description,
     author='Ken',
     author_email='kenjyco@gmail.com',
@@ -19,6 +19,7 @@ setup(
         'PyMySQL==0.9.3',
         'SQLAlchemy==1.3.2',
         'bg-helper',
+        'click>=6.0',
         'psycopg2-binary==2.8.1',
         'settings-helper',
     ],
@@ -26,6 +27,11 @@ setup(
     package_dir={'': '.'},
     package_data={
         '': ['*.ini'],
+    },
+    entry_points={
+        'console_scripts': [
+            'sql-ipython=sql_helper.scripts.sql_ipython:main',
+        ],
     },
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -36,5 +42,5 @@ setup(
         'Topic :: Software Development :: Libraries',
         'Intended Audience :: Developers',
     ],
-    keywords = ['sql', 'mysql', 'postgresql', 'helper']
+    keywords = ['sql', 'mysql', 'postgresql', 'sqlite', 'helper']
 )
