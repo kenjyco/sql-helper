@@ -4,6 +4,9 @@ from setuptools import setup, find_packages
 with open('README.rst', 'r') as fp:
     long_description = fp.read()
 
+with open('requirements.txt', 'r') as fp:
+    requirements = fp.read().splitlines()
+
 setup(
     name='sql-helper',
     version='0.0.10',
@@ -15,14 +18,7 @@ setup(
     url='https://github.com/kenjyco/sql-helper',
     download_url='https://github.com/kenjyco/sql-helper/tarball/v0.0.10',
     packages=find_packages(),
-    install_requires=[
-        'PyMySQL==0.9.3',
-        'SQLAlchemy==1.3.2',
-        'bg-helper',
-        'click>=6.0',
-        'psycopg2-binary==2.8.1',
-        'settings-helper',
-    ],
+    install_requires=requirements,
     include_package_data=True,
     package_dir={'': '.'},
     package_data={
