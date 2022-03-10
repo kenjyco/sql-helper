@@ -28,6 +28,8 @@ def main(no_colors, no_vi):
             sql=sql,
             SQL=SQL
         )
+    else:
+        print('Set a connection string in the SQL_URL env var and try again')
 
 
 if __name__ == '__main__':
