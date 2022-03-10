@@ -19,15 +19,6 @@ fi
 [[ ! -d venv ]] && $PYTHON -m venv venv
 PYTHON=$(dirname $PIP)/python
 $PYTHON -m pip install --upgrade pip wheel
-$PIP install -r requirements.txt ${pip_args[@]}
-if [[ ! $(uname) =~ "MINGW" ]]; then
-    $PIP install ipython pdbpp ${pip_args[@]}
-else
-    $PIP install ipython ${pip_args[@]}
-fi
-$PYTHON setup.py develop
-
-if [[ ! -f "$HOME/.config/sql-helper/settings.ini" ]]; then
-    mkdir -pv "$HOME/.config/sql-helper"
-    cp -av sql_helper/settings.ini "$HOME/.config/sql-helper"
-fi
+extra_packages=(ipython)
+[[ ! $(uname) =~ "MINGW" ]] && extra_packages+=(pdbpp)
+$PIP install ${extra_packages[@]} ${pip_args[@]} --editable .
