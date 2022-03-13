@@ -19,6 +19,6 @@ fi
 [[ ! -d venv ]] && $PYTHON -m venv venv
 PYTHON=$(dirname $PIP)/python
 $PYTHON -m pip install --upgrade pip wheel
-extra_packages=(ipython)
+extra_packages=(ipython pytest)
 [[ ! $(uname) =~ "MINGW" ]] && extra_packages+=(pdbpp)
 $PIP install ${extra_packages[@]} ${pip_args[@]} --editable .
