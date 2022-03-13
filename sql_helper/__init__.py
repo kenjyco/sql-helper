@@ -432,7 +432,7 @@ class SQL(object):
 
     def get_timestamp_columns(self, table, schema=None, name_only=False,
                               sort=False, **kwargs):
-        """Return a list columns that are DATE, DATETIME, TIME, or TIMESTAMP
+        """Return a list of columns that are DATE, DATETIME, TIME, or TIMESTAMP
 
         - name_only: if True, only return the names of columns, not full dict of
           info per column
@@ -511,7 +511,7 @@ class SQL(object):
         return results
 
     def get_non_nullable_columns(self, table, schema=None, name_only=False,
-                             sort=False, **kwargs):
+                                 sort=False, **kwargs):
         """Return a list of dicts containing info about non-nullable columns
 
         - name_only: if True, only return the names of columns, not full dict of

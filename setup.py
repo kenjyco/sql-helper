@@ -38,5 +38,5 @@ setup(
         'Topic :: Software Development :: Libraries',
         'Intended Audience :: Developers',
     ],
-    keywords = ['sql', 'mysql', 'postgresql', 'sqlite', 'helper']
+    keywords=['sql', 'mysql', 'postgresql', 'sqlite', 'helper']
 )
