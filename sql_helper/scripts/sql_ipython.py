@@ -1,11 +1,6 @@
 import click
 import input_helper as ih
-import settings_helper as sh
-from sql_helper import SQL
-
-
-get_setting = sh.settings_getter('sql_helper')
-sql_url = get_setting('sql_url')
+import sql_helper as sqh
 
 
 @click.command()
@@ -18,18 +13,18 @@ sql_url = get_setting('sql_url')
     help='Do not use vi editing mode in ipython'
 )
 def main(no_colors, no_vi):
-    """Start an ipython session with an instance of an SQL object for SQL_URL env var"""
-    if sql_url:
-        sql = SQL(sql_url)
+    """Start an ipython session with an instance of an SQL object"""
+    selected = sqh.select_url_from_settings()
+    if selected:
+        sql = sqh.SQL(selected, attempt_docker=True)
         ih.start_ipython(
             warn=True,
             colors=not no_colors,
             vi=not no_vi,
-            sql=sql,
-            SQL=SQL
+            sql=sql
         )
     else:
-        print('Set a connection string in the SQL_URL env var and try again')
+        print('No connection string selected')
 
 
 if __name__ == '__main__':

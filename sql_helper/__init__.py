@@ -1,20 +1,161 @@
 import re
+import bg_helper as bh
+import input_helper as ih
 import settings_helper as sh
-from sqlalchemy import create_engine, text, inspect
-from sqlalchemy.exc import ResourceClosedError
-from sqlalchemy.sql import sqltypes
 from os.path import isfile
+from sqlalchemy import create_engine, text, inspect
+from sqlalchemy.exc import OperationalError, ResourceClosedError
+from sqlalchemy.sql import sqltypes
+from time import sleep
 
 
-get_setting = sh.settings_getter(__name__)
-sql_url = get_setting('sql_url')
-connect_timeout = get_setting('connect_timeout', 5)
+SETTINGS = sh.get_all_settings(__name__).get(sh.APP_ENV, {})
+CONNECT_TIMEOUT = SETTINGS.get('connect_timeout', 5)
+DB_TYPES = ('postgresql', 'mysql')
 rx_mysql = re.compile(r'mysql://([\S]+)')
 
 
+def _settings_for_docker_ok(exception=False):
+    """Return True if settings.ini has the required values set
+
+    - exception: if True, raise an exception if settings are not ok (after
+      optional sync attempt)
+
+    If any are missing, prompt to sync settings with vimdiff
+    """
+    global SETTINGS
+    settings_keys_for_docker = [
+        'postgresql_container_name', 'postgresql_image_version', 'postgresql_username',
+        'postgresql_password', 'postgresql_port', 'postgresql_db', 'postgresql_rm',
+        'postgresql_data_dir', 'postgresql_url',
+        'mysql_container_name', 'mysql_image_version', 'mysql_username', 'mysql_password',
+        'mysql_root_password', 'mysql_port', 'mysql_db', 'mysql_rm', 'mysql_data_dir', 'mysql_url'
+    ]
+    missing_settings = set(settings_keys_for_docker) - set(SETTINGS.keys())
+    if missing_settings != set():
+        message = 'Update your settings.ini to have: {}'.format(sorted(list(missing_settings)))
+        print(message)
+        resp = ih.user_input('Sync settings.ini with vimdiff? (y/n)')
+        if resp.lower().startswith('y'):
+            sh.sync_settings_file(__name__)
+            SETTINGS = sh.get_all_settings(__name__).get(sh.APP_ENV, {})
+            missing_settings = set(settings_keys_for_docker) - set(SETTINGS.keys())
+            if missing_settings == set():
+                return True
+            elif exception:
+                message = 'Update your settings.ini to have: {}'.format(sorted(list(missing_settings)))
+                raise Exception(message)
+        else:
+            if exception:
+                raise Exception(message)
+    else:
+        return True
+
+
+def start_docker(db_type, exception=False, show=False, force=False):
+    """Start docker container using values from settings.ini file
+
+    - db_type: postgresql or mysql
+    - exception: if True and docker has an error response, raise an exception
+    - show: if True, show the docker commands and output
+    - force: if True, stop the container and remove it before re-creating
+    """
+    assert db_type in DB_TYPES, (
+        'db_type must be one of {}... not {}'.format(
+            repr(DB_TYPES), db_type
+        )
+    )
+    ok = _settings_for_docker_ok(exception=exception)
+    if not ok:
+        return False
+
+    if db_type == 'postgresql':
+        return bh.tools.docker_postgres_start(
+            SETTINGS['postgresql_container_name'],
+            version=SETTINGS['postgresql_image_version'],
+            port=SETTINGS['postgresql_port'],
+            username=SETTINGS['postgresql_username'],
+            password=SETTINGS['postgresql_password'],
+            db=SETTINGS['postgresql_db'],
+            rm=SETTINGS['postgresql_rm'],
+            data_dir=SETTINGS['postgresql_data_dir'],
+            exception=exception,
+            show=show,
+            force=force
+        )
+    elif db_type == 'mysql':
+        return bh.tools.docker_mysql_start(
+            SETTINGS['mysql_container_name'],
+            version=SETTINGS['mysql_image_version'],
+            port=SETTINGS['mysql_port'],
+            root_password=SETTINGS['mysql_root_password'],
+            username=SETTINGS['mysql_username'],
+            password=SETTINGS['mysql_password'],
+            db=SETTINGS['mysql_db'],
+            rm=SETTINGS['mysql_rm'],
+            data_dir=SETTINGS['mysql_data_dir'],
+            exception=exception,
+            show=show,
+            force=force
+        )
+
+
+def stop_docker(db_type, exception=False, show=False):
+    """Stop docker container for redis using values from settings.ini file
+
+    - db_type: postgresql or mysql
+    - exception: if True and docker has an error response, raise an exception
+    - show: if True, show the docker commands and output
+    """
+    assert db_type in DB_TYPES, (
+        'db_type must be one of {}... not {}'.format(
+            repr(DB_TYPES), db_type
+        )
+    )
+    container_key = '{}_container_name'.format(db_type)
+    if container_key not in SETTINGS:
+        message = 'Update your settings.ini to have: {}'.format(container_key)
+        if exception is True:
+            raise Exception(message)
+        elif show is True:
+            print(message)
+        return False
+    return bh.tools.docker_stop(SETTINGS[container_key], exception=exception, show=show)
+
+
+def urls_from_settings():
+    """Return a list of urls (connection strings) from settings.ini"""
+    return [
+        url
+        for url in [
+            SETTINGS.get('sql_url'),
+            SETTINGS.get('postgresql_url'),
+            SETTINGS.get('mysql_url'),
+            SETTINGS.get('sqlite_url'),
+        ]
+        if url
+    ]
+
+
+def select_url_from_settings():
+    """Prompt user to select a url (connection string) from settings.ini and return it"""
+    urls = urls_from_settings()
+    if not urls:
+        print('No connection strings are defined in ~/.config/sql-helper/settings.ini')
+        return
+    selected = ih.make_selections(
+        urls,
+        prompt='Select connection string to use',
+        wrap=False,
+        one=True
+    )
+    if selected:
+        return selected
+
+
 class SQL(object):
-    def __init__(self, url, connect_timeout=connect_timeout, **connect_args):
-        """An instance that can execute SQL statements on a SQL db (mysql/postgresql)
+    def __init__(self, url, connect_timeout=CONNECT_TIMEOUT, attempt_docker=False, **connect_args):
+        """An instance that can execute SQL statements on a SQL db (postgresql/mysql/sqlite/etc)
 
         - url: connection url to a SQL db
             - postgresql://someuser:somepassword@somehost[:someport]/somedatabase
@@ -23,6 +164,9 @@ class SQL(object):
             - redshift+psycopg2://someuser:somepassword@somehost/somedatabase
                 - You must install the `sqlalchemy-redshift` package wherever you
                   installed `sql-helper` to connect to a redshift instance
+        - connect_timeout: number of seconds to wait for connection before giving up
+        - attempt_docker: if True, and unable to connect initially, call start_docker
+          if url matches postgresql_url or mysql_url in settings.ini
 
         Other kwargs passed in will be passed to sqlalchemy.create_engine as
         connect_args
@@ -34,7 +178,25 @@ class SQL(object):
 
         url = self._fix_mysql_url(url)
         self._engine = create_engine(url, connect_args=connect_args)
-        self._inspector = inspect(self._engine)
+        try:
+            self._inspector = inspect(self._engine)
+        except OperationalError as e:
+            if 'Connection refused' in repr(e) and attempt_docker is True:
+                if url in [SETTINGS.get('postgresql_url'), self._fix_mysql_url(SETTINGS.get('mysql_url', ''))]:
+                    if url.startswith('postgresql'):
+                        db_type = 'postgresql'
+                    elif url.startswith('mysql'):
+                        db_type = 'mysql'
+                    start_docker(db_type, show=True)
+                    print('Going to sleep for 15 seconds...')
+                    sleep(15)
+                    self._engine = create_engine(url, connect_args=connect_args)
+                    self._inspector = inspect(self._engine)
+                else:
+                    raise
+            else:
+                raise
+
         if (
             self._engine.url.drivername.startswith('postgresql') or
             self._engine.url.drivername == 'redshift+psycopg2'
@@ -42,6 +204,8 @@ class SQL(object):
             self._type = 'postgresql'
         elif self._engine.url.drivername.startswith('mysql'):
             self._type = 'mysql'
+        elif self._engine.url.drivername.startswith('sqlite'):
+            self._type = 'sqlite'
         else:
             self._type = self._engine.url.drivername
 
