@@ -101,7 +101,7 @@ def start_docker(db_type, exception=False, show=False, force=False):
 
 
 def stop_docker(db_type, exception=False, show=False):
-    """Stop docker container for redis using values from settings.ini file
+    """Stop docker container for postgresql/mysql using values from settings.ini file
 
     - db_type: postgresql or mysql
     - exception: if True and docker has an error response, raise an exception
