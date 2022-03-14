@@ -171,6 +171,8 @@ class SQL(object):
         Other kwargs passed in will be passed to sqlalchemy.create_engine as
         connect_args
         """
+        if not url:
+            raise ValueError('The url cannot be None or empty string')
         if url.startswith('sqlite://'):
             connect_args['timeout'] = connect_timeout
         else:

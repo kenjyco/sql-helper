@@ -6,13 +6,14 @@ sqlite_url = sqh.SETTINGS.get('sqlite_url')
 try:
     sql = sqh.SQL(sqlite_url)
     num_tables = len(sql.get_tables())
-except sqh.OperationalError:
+except (sqh.OperationalError, ValueError):
     sql = None
     num_tables = 0
 
 
 @pytest.mark.skipif(num_tables != 0, reason='Database is not empty, has {} table(s)'.format(num_tables))
 @pytest.mark.skipif(sql is None, reason='Not connected to sqlite')
+@pytest.mark.skipif(not sqlite_url, reason='No sqlite_url in settings')
 class TestSqlite:
     def test_empty_sqlite(self):
         assert sql._engine.url.drivername == 'sqlite'

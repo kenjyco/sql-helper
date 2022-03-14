@@ -6,13 +6,14 @@ postgresql_url = sqh.SETTINGS.get('postgresql_url')
 try:
     sql = sqh.SQL(postgresql_url, attempt_docker=True)
     num_tables = len(sql.get_tables())
-except sqh.OperationalError:
+except (sqh.OperationalError, ValueError):
     sql = None
     num_tables = 0
 
 
 @pytest.mark.skipif(num_tables != 0, reason='Database is not empty, has {} table(s)'.format(num_tables))
 @pytest.mark.skipif(sql is None, reason='Not connected to postgresql')
+@pytest.mark.skipif(not postgresql_url, reason='No postgresql_url in settings')
 class TestPostgresql:
     def test_empty_postgresql(self):
         assert sql._engine.url.drivername == 'postgresql'

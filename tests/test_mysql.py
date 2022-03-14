@@ -6,13 +6,14 @@ mysql_url = sqh.SETTINGS.get('mysql_url')
 try:
     sql = sqh.SQL(mysql_url, attempt_docker=True)
     num_tables = len(sql.get_tables())
-except sqh.OperationalError:
+except (sqh.OperationalError, ValueError):
     sql = None
     num_tables = 0
 
 
 @pytest.mark.skipif(num_tables != 0, reason='Database is not empty, has {} table(s)'.format(num_tables))
 @pytest.mark.skipif(sql is None, reason='Not connected to mysql')
+@pytest.mark.skipif(not mysql_url, reason='No mysql_url in settings')
 class TestMysql:
     def test_empty_mysql(self):
         assert sql._engine.url.drivername == 'mysql+pymysql'
