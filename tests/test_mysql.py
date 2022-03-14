@@ -6,7 +6,7 @@ mysql_url = sqh.SETTINGS.get('mysql_url')
 try:
     sql = sqh.SQL(mysql_url, attempt_docker=True)
     num_tables = len(sql.get_tables())
-except:
+except sqh.OperationalError:
     sql = None
     num_tables = 0
 

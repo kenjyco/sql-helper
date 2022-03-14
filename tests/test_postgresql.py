@@ -6,7 +6,7 @@ postgresql_url = sqh.SETTINGS.get('postgresql_url')
 try:
     sql = sqh.SQL(postgresql_url, attempt_docker=True)
     num_tables = len(sql.get_tables())
-except:
+except sqh.OperationalError:
     sql = None
     num_tables = 0
 

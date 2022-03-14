@@ -6,7 +6,7 @@ sqlite_url = sqh.SETTINGS.get('sqlite_url')
 try:
     sql = sqh.SQL(sqlite_url)
     num_tables = len(sql.get_tables())
-except:
+except sqh.OperationalError:
     sql = None
     num_tables = 0
 
