@@ -6,7 +6,6 @@ from os.path import isfile
 from sqlalchemy import create_engine, text, inspect
 from sqlalchemy.exc import OperationalError, ResourceClosedError
 from sqlalchemy.sql import sqltypes
-from time import sleep
 
 
 SETTINGS = sh.get_all_settings(__name__).get(sh.APP_ENV, {})
@@ -52,13 +51,15 @@ def _settings_for_docker_ok(exception=False):
         return True
 
 
-def start_docker(db_type, exception=False, show=False, force=False):
+def start_docker(db_type, exception=False, show=False, force=False, wait=True, sleeptime=2):
     """Start docker container using values from settings.ini file
 
     - db_type: postgresql or mysql
     - exception: if True and docker has an error response, raise an exception
     - show: if True, show the docker commands and output
     - force: if True, stop the container and remove it before re-creating
+    - wait: if True, don't return until db is able to accept connections
+    - sleeptime: if wait is True, sleep this number of seconds before checks
     """
     assert db_type in DB_TYPES, (
         'db_type must be one of {}... not {}'.format(
@@ -81,7 +82,9 @@ def start_docker(db_type, exception=False, show=False, force=False):
             data_dir=SETTINGS['postgresql_data_dir'],
             exception=exception,
             show=show,
-            force=force
+            force=force,
+            wait=wait,
+            sleeptime=sleeptime
         )
     elif db_type == 'mysql':
         return bh.tools.docker_mysql_start(
@@ -96,7 +99,9 @@ def start_docker(db_type, exception=False, show=False, force=False):
             data_dir=SETTINGS['mysql_data_dir'],
             exception=exception,
             show=show,
-            force=force
+            force=force,
+            wait=wait,
+            sleeptime=sleeptime
         )
 
 
@@ -154,7 +159,8 @@ def select_url_from_settings():
 
 
 class SQL(object):
-    def __init__(self, url, connect_timeout=CONNECT_TIMEOUT, attempt_docker=False, **connect_args):
+    def __init__(self, url, connect_timeout=CONNECT_TIMEOUT, attempt_docker=False,
+                 wait=False, **connect_args):
         """An instance that can execute SQL statements on a SQL db (postgresql/mysql/sqlite/etc)
 
         - url: connection url to a SQL db
@@ -167,6 +173,7 @@ class SQL(object):
         - connect_timeout: number of seconds to wait for connection before giving up
         - attempt_docker: if True, and unable to connect initially, call start_docker
           if url matches postgresql_url or mysql_url in settings.ini
+        - wait: if True and attempt_docker is True,
 
         Other kwargs passed in will be passed to sqlalchemy.create_engine as
         connect_args
@@ -189,9 +196,7 @@ class SQL(object):
                         db_type = 'postgresql'
                     elif url.startswith('mysql'):
                         db_type = 'mysql'
-                    start_docker(db_type, show=True)
-                    print('Going to sleep for 15 seconds...')
-                    sleep(15)
+                    start_docker(db_type, show=True, wait=wait)
                     self._engine = create_engine(url, connect_args=connect_args)
                     self._inspector = inspect(self._engine)
                 else:

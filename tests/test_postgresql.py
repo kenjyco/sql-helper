@@ -4,7 +4,7 @@ import sql_helper as sqh
 
 postgresql_url = sqh.SETTINGS.get('postgresql_url')
 try:
-    sql = sqh.SQL(postgresql_url, attempt_docker=True)
+    sql = sqh.SQL(postgresql_url, attempt_docker=True, wait=True)
     num_tables = len(sql.get_tables())
 except (sqh.OperationalError, ValueError):
     sql = None

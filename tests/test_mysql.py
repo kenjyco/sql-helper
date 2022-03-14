@@ -4,7 +4,7 @@ import sql_helper as sqh
 
 mysql_url = sqh.SETTINGS.get('mysql_url')
 try:
-    sql = sqh.SQL(mysql_url, attempt_docker=True)
+    sql = sqh.SQL(mysql_url, attempt_docker=True, wait=True)
     num_tables = len(sql.get_tables())
 except (sqh.OperationalError, ValueError):
     sql = None
