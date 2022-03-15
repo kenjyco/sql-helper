@@ -16,7 +16,7 @@ def main(no_colors, no_vi):
     """Start an ipython session with an instance of an SQL object"""
     selected = sqh.select_url_from_settings()
     if selected:
-        sql = sqh.SQL(selected, attempt_docker=True)
+        sql = sqh.SQL(selected, attempt_docker=True, wait=True)
         ih.start_ipython(
             warn=True,
             colors=not no_colors,
