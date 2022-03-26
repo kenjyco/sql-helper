@@ -180,9 +180,9 @@ class SQL(object):
         """
         if not url:
             raise ValueError('The url cannot be None or empty string')
-        if url.startswith('sqlite://'):
+        if url.startswith('sqlite'):
             connect_args['timeout'] = connect_timeout
-        else:
+        elif url.startswith('postgresql') or url.startswith('mysql'):
             connect_args['connect_timeout'] = connect_timeout
 
         url = self._fix_mysql_url(url)
