@@ -4,7 +4,7 @@ import input_helper as ih
 import settings_helper as sh
 from os.path import isfile
 from sqlalchemy import create_engine, text, inspect
-from sqlalchemy.exc import OperationalError, ResourceClosedError
+from sqlalchemy.exc import NoSuchModuleError, OperationalError, ResourceClosedError
 from sqlalchemy.sql import sqltypes
 
 
@@ -186,7 +186,10 @@ class SQL(object):
             connect_args['connect_timeout'] = connect_timeout
 
         url = self._fix_mysql_url(url)
-        self._engine = create_engine(url, connect_args=connect_args)
+        try:
+            self._engine = create_engine(url, connect_args=connect_args)
+        except NoSuchModuleError as e:
+            raise
         try:
             self._inspector = inspect(self._engine)
         except OperationalError as e:
