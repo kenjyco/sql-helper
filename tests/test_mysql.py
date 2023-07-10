@@ -21,15 +21,16 @@ class TestMysql:
         assert tables == []
 
     def test_execute_create_table(self):
-        sql.execute('create table stuff (first int, second float, third date)')
+        sql.execute('create table stuff (first int, second float, third date, fourth datetime)')
         tables = sql.get_tables()
         assert tables == ['stuff']
+        assert sql.get_timestamp_columns('stuff', name_only=True) == ['third', 'fourth']
 
     def test_columns(self):
         columns = sql.get_columns('stuff', name_only=True)
-        assert columns == ['first', 'second', 'third']
+        assert columns == ['first', 'second', 'third', 'fourth']
         timestamp_columns = sql.get_timestamp_columns('stuff', name_only=True)
-        assert timestamp_columns == ['third']
+        assert timestamp_columns == ['third', 'fourth']
 
     def test_clear_db(self):
         """This MUST be the final test since it's the new teardown"""
