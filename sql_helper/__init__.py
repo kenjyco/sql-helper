@@ -244,7 +244,7 @@ class SQL(object):
         return res
 
     def execute(self, statement, params={}):
-        """Pass statement to SQL engine and return a list of dicts, or list
+        """Pass statement to SQL engine and return a list of dicts, list, dict, or value
 
         - statement: a string or path to a sql script
         - params: dict or list of dicts containing any :param names in string
@@ -252,7 +252,8 @@ class SQL(object):
 
         If the result returns rows of info and the first result only has 1
         column, a simple list is returned; if there are multiple columns, a
-        list of dicts is returned
+        list of dicts is returned; if there is only 1 row and there are parentheses
+        in the statement, the item (dict or value) at index 0 is returned
 
         If the result does not return rows, or result set is empty, an empty
         list is returned
@@ -277,6 +278,8 @@ class SQL(object):
         elif num_columns > 1:
             results.append(dict(first.items()))
             results.extend([dict(row.items()) for row in others])
+        if not others and '(' in statement:
+            results = results[0]
         return results
 
     def call_procedure(self, procedure, list_of_params=[]):
