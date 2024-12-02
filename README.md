@@ -56,7 +56,7 @@ In [4]: results = sql.execute('SELECT ...')
 
 ## Extra
 
-### [Redshift](https://aws.amazon.com/redshift/)
+#### [Redshift](https://aws.amazon.com/redshift/)
 
 Install `sqlalchemy-redshift` wherever you installed `sql-helper`
 

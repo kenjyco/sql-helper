@@ -68,7 +68,7 @@ Extra
 -----
 
 `Redshift <https://aws.amazon.com/redshift/>`__
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Install ``sqlalchemy-redshift`` wherever you installed ``sql-helper``
 
