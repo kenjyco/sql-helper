@@ -7,9 +7,9 @@ import bg_helper as bh
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
 local_package_paths = [this_dir]
-bg_helper_dir = os.path.join(os.path.dirname(this_dir), 'bg-helper')
-if os.path.isdir(bg_helper_dir):
-    local_package_paths.append(bg_helper_dir)
+# bg_helper_dir = os.path.join(os.path.dirname(this_dir), 'bg-helper')
+# if os.path.isdir(bg_helper_dir):
+#     local_package_paths.append(bg_helper_dir)
 
 
 def create_test_environments():
