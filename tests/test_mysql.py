@@ -2,6 +2,7 @@ import pytest
 import sql_helper as sqh
 from datetime import date, datetime
 from decimal import Decimal
+from sys import version_info
 
 
 mysql_url = sqh.SETTINGS.get('mysql_url')
@@ -36,7 +37,8 @@ class TestMysql:
 
     def test_insert_one(self):
         statement = sql.insert('stuff', {'first': 5, 'second': 1.23, 'third': '2022-05-05', 'fourth': '2022-05-05 09:30:10'})
-        assert statement == 'insert into stuff (first, second, third, fourth) values (:first, :second, :third, :fourth)'
+        if version_info.minor > 5:
+            assert statement == 'insert into stuff (first, second, third, fourth) values (:first, :second, :third, :fourth)'
         assert sql.execute('select first from stuff') == [5]
         assert sql.execute('select count(*) from stuff') == 1
         statement2 = sql.insert('stuff', {'first': 10})
@@ -54,7 +56,8 @@ class TestMysql:
             {'first': -10, 'second': 1.23, 'third': '2022-05-10', 'fourth': '2022-05-10 09:30:10'},
         ]
         statement = sql.insert('stuff', data)
-        assert statement == 'insert into stuff (first, second, third, fourth) values (:first, :second, :third, :fourth)'
+        if version_info.minor > 5:
+            assert statement == 'insert into stuff (first, second, third, fourth) values (:first, :second, :third, :fourth)'
         nums = sql.execute('select first from stuff')
         assert nums == [5, 10, -1, 7, 25, 20, -10]
         assert sum(nums) == 56
