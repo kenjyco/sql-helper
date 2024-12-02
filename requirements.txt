@@ -1,7 +1,13 @@
-PyMySQL>=0.9.3
-SQLAlchemy>=1.3,<1.5
 bg-helper
 click>=6.0
 cryptography
 psycopg2-binary>=2.8,<3
 settings-helper
+
+# pymysql 1.0.0 with python 3.5 has a syntax error
+pymysql>=0.9.3,<1; python_version == "3.5"
+pymysql>=0.9.3
+
+# sqlalchemy 2 did not work with python 3.13 until v2.0.31
+sqlalchemy>=1.3,!=2.0.30,!=2.0.29,!=2.0.28,!=2.0.27,!=2.0.26,!=2.0.25,!=2.0.24,!=2.0.23,!=2.0.22,!=2.0.21,!=2.0.20,!=2.0.19,!=2.0.18,!=2.0.17,!=2.0.16,!=2.0.15,!=2.0.14,!=2.0.13,!=2.0.12,!=2.0.11,!=2.0.10,!=2.0.9,!=2.0.8,!=2.0.7,!=2.0.6,!=2.0.5.post1,!=2.0.4,!=2.0.3,!=2.0.2,!=2.0.1,!=2.0.0; python_version == "3.13"
+sqlalchemy>=1.3
