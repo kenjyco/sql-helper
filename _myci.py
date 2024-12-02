@@ -49,7 +49,7 @@ def create_test_environments():
         extra_packages='pytest<=7.4.4, pdbpp',
         dep_versions_dict={
             'sqlalchemy': '1.4.54, 1.3.24',
-            'pymysql': '1.1.1, 1.0.2',
+            'pymysql': '1.1.1',
             'psycopg2-binary': '2.9.9'
         }
     )
@@ -75,7 +75,7 @@ def create_test_environments():
         extra_packages='pytest<=7.4.4, pdbpp',
         dep_versions_dict={
             'sqlalchemy': '1.4.54, 1.3.24',
-            'pymysql': '1.1.1, 1.0.2',
+            'pymysql': '1.1.1',
             'psycopg2-binary': '2.9.10'
         }
     )

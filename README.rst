@@ -44,6 +44,14 @@ If using Python 3.6, be sure to update pip to **at least version 19.3**
 ``cryptography`` dependency can be built
 (``curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y``)
 
+pymysql package
+^^^^^^^^^^^^^^^
+
+According to https://nvd.nist.gov/vuln/detail/CVE-2024-36039, pymysql
+versions below 1.1.1 are vulnerable to SQL injection. Version 1.1.1 is
+only available for Python 3.7+ (final version for Python 3.6 is 1.0.2;
+final working version for Python 3.5 is 0.9.3).
+
 Install
 -------
 
@@ -110,50 +118,36 @@ Test matrix
    venv_py3.6.15_psycopg2-binary2.9.8_pymysql1.0.2_sqlalchemy1.3.24
    venv_py3.6.15_psycopg2-binary2.9.8_pymysql1.0.2_sqlalchemy1.4.54
 
-   venv_py3.7.17_psycopg2-binary2.9.9_pymysql1.0.2_sqlalchemy1.3.24
-   venv_py3.7.17_psycopg2-binary2.9.9_pymysql1.0.2_sqlalchemy1.4.54
    venv_py3.7.17_psycopg2-binary2.9.9_pymysql1.1.1_sqlalchemy1.3.24
    venv_py3.7.17_psycopg2-binary2.9.9_pymysql1.1.1_sqlalchemy1.4.54
    venv_py3.7.17_psycopg2-binary2.9.9_pymysql1.1.1_sqlalchemy2.0.2
    venv_py3.7.17_psycopg2-binary2.9.9_pymysql1.1.1_sqlalchemy2.0.36
 
-   venv_py3.8.20_psycopg2-binary2.9.10_pymysql1.0.2_sqlalchemy1.3.24
-   venv_py3.8.20_psycopg2-binary2.9.10_pymysql1.0.2_sqlalchemy1.4.54
    venv_py3.8.20_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy1.3.24
    venv_py3.8.20_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy1.4.54
    venv_py3.8.20_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy2.0.2
    venv_py3.8.20_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy2.0.36
 
-   venv_py3.9.20_psycopg2-binary2.9.10_pymysql1.0.2_sqlalchemy1.3.24
-   venv_py3.9.20_psycopg2-binary2.9.10_pymysql1.0.2_sqlalchemy1.4.54
    venv_py3.9.20_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy1.3.24
    venv_py3.9.20_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy1.4.54
    venv_py3.9.20_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy2.0.2
    venv_py3.9.20_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy2.0.36
 
-   venv_py3.10.15_psycopg2-binary2.9.10_pymysql1.0.2_sqlalchemy1.3.24
-   venv_py3.10.15_psycopg2-binary2.9.10_pymysql1.0.2_sqlalchemy1.4.54
    venv_py3.10.15_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy1.3.24
    venv_py3.10.15_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy1.4.54
    venv_py3.10.15_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy2.0.2
    venv_py3.10.15_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy2.0.36
 
-   venv_py3.11.10_psycopg2-binary2.9.10_pymysql1.0.2_sqlalchemy1.3.24
-   venv_py3.11.10_psycopg2-binary2.9.10_pymysql1.0.2_sqlalchemy1.4.54
    venv_py3.11.10_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy1.3.24
    venv_py3.11.10_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy1.4.54
    venv_py3.11.10_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy2.0.2
    venv_py3.11.10_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy2.0.36
 
-   venv_py3.12.7_psycopg2-binary2.9.10_pymysql1.0.2_sqlalchemy1.3.24
-   venv_py3.12.7_psycopg2-binary2.9.10_pymysql1.0.2_sqlalchemy1.4.54
    venv_py3.12.7_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy1.3.24
    venv_py3.12.7_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy1.4.54
    venv_py3.12.7_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy2.0.2
    venv_py3.12.7_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy2.0.36
 
-   venv_py3.13.0_psycopg2-binary2.9.10_pymysql1.0.2_sqlalchemy1.3.24
-   venv_py3.13.0_psycopg2-binary2.9.10_pymysql1.0.2_sqlalchemy1.4.54
    venv_py3.13.0_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy1.3.24
    venv_py3.13.0_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy1.4.54
    venv_py3.13.0_psycopg2-binary2.9.10_pymysql1.1.1_sqlalchemy2.0.31
