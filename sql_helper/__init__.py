@@ -3,7 +3,7 @@ import bg_helper as bh
 import input_helper as ih
 import settings_helper as sh
 from os.path import isfile
-from sqlalchemy import create_engine, text, inspect
+from sqlalchemy import create_engine, text, inspect, __version__ as sa_version
 from sqlalchemy.exc import NoSuchModuleError, OperationalError, ResourceClosedError
 from sqlalchemy.sql import sqltypes
 
@@ -12,6 +12,7 @@ SETTINGS = sh.get_all_settings(__name__).get(sh.APP_ENV, {})
 CONNECT_TIMEOUT = SETTINGS.get('connect_timeout', 5)
 DB_TYPES = ('postgresql', 'mysql')
 rx_mysql = re.compile(r'mysql://([\S]+)')
+sa_version_tuple = ih.string_to_version_tuple(sa_version)
 
 
 def _settings_for_docker_ok(exception=False):
@@ -276,8 +277,12 @@ class SQL(object):
             results.append(first[0])
             results.extend([row[0] for row in others])
         elif num_columns > 1:
-            results.append(dict(first.items()))
-            results.extend([dict(row.items()) for row in others])
+            if sa_version_tuple[0] <= 1:
+                results.append(dict(first.items()))
+                results.extend([dict(row.items()) for row in others])
+            else:
+                results.append(dict(first._mapping))
+                results.extend([dict(row._mapping) for row in others])
         if not others and '(' in statement:
             results = results[0]
         return results
@@ -398,7 +403,9 @@ class SQL(object):
         elif self._type == 'mysql':
             return self._get_mysql_tables()
         else:
-            return self._engine.table_names()
+            if sa_version_tuple[0] <= 1:
+                return self._engine.table_names()
+            return self._inspector.get_table_names()
 
     def _get_postgresql_indexes(self, table, schema=None):
         if '.' in table and schema is None:
