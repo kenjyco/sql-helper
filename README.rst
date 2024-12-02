@@ -84,6 +84,7 @@ Test matrix
 -----------
 
    Tested with the following python versions and dependency combinations
+   against postgres 13 and mysql 8.0 docker containers.
 
 ::
 

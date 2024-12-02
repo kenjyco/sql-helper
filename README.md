@@ -70,7 +70,8 @@ Connect with DB url in the following format:
 
 ## Test matrix
 
-> Tested with the following python versions and dependency combinations
+> Tested with the following python versions and dependency combinations against
+> postgres 13 and mysql 8.0 docker containers.
 
 ```
 venv_py3.5.10_psycopg2-binary2.8.6_pymysql0.10.1_sqlalchemy1.3.1
