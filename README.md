@@ -36,6 +36,10 @@ Otherwise, you will need to install the [rust compiler](https://www.rust-lang.or
 so that the `cryptography` dependency can be built
 (`curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y`)
 
+If using Python 3.5, there is no pre-compiled wheel for `cryptography` (even
+when upgrading pip to version 20.3.4). It also cannot be built if the rust
+compile is installed. Support for Python 3.5 is effectively removed.
+
 #### pymysql package
 
 According to <https://nvd.nist.gov/vuln/detail/CVE-2024-36039>, pymysql versions
