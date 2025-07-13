@@ -85,15 +85,6 @@ Connect with DB url in the following format:
 > postgres 13 and mysql 8.0 docker containers.
 
 ```
-venv_py3.5.10_psycopg2-binary2.8.6_pymysql0.10.1_sqlalchemy1.3.1
-venv_py3.5.10_psycopg2-binary2.8.6_pymysql0.10.1_sqlalchemy1.3.24
-venv_py3.5.10_psycopg2-binary2.8.6_pymysql0.9.3_sqlalchemy1.3.1
-venv_py3.5.10_psycopg2-binary2.8.6_pymysql0.9.3_sqlalchemy1.3.24
-venv_py3.5.10_psycopg2-binary2.8_pymysql0.10.1_sqlalchemy1.3.1
-venv_py3.5.10_psycopg2-binary2.8_pymysql0.10.1_sqlalchemy1.3.24
-venv_py3.5.10_psycopg2-binary2.8_pymysql0.9.3_sqlalchemy1.3.1
-venv_py3.5.10_psycopg2-binary2.8_pymysql0.9.3_sqlalchemy1.3.24
-
 venv_py3.6.15_psycopg2-binary2.8.6_pymysql0.10.1_sqlalchemy1.3.24
 venv_py3.6.15_psycopg2-binary2.8.6_pymysql0.10.1_sqlalchemy1.4.54
 venv_py3.6.15_psycopg2-binary2.8.6_pymysql0.9.3_sqlalchemy1.3.24
