@@ -30,7 +30,7 @@ brew install postgresql
 
 #### cryptography package
 
-If using Python 3.6, be sure to update pip to **at least version 19.3** (default pip
+If using Python 3.6, be sure to update pip to **at least version 20.3.4** (default pip
 is 18.1) so that the pre-compiled wheel for `cryptography` can be used.
 Otherwise, you will need to install the [rust compiler](https://www.rust-lang.org)
 so that the `cryptography` dependency can be built

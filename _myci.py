@@ -13,14 +13,14 @@ local_package_paths = [this_dir]
 
 
 def create_test_environments():
-    # python 3.6 must have pip 19.3 or higher to use pre-compiled wheel for cryptography dep
+    # python 3.6 must have pip 20.3.4 or higher to use pre-compiled wheel for cryptography dep
     bh.tools.pyenv_create_venvs_for_py_versions_and_dep_versions(
         this_dir,
         py_versions='3.6.15',
-        pip_version='19.3',
+        pip_version='20.3.4',
         die=True,
         local_package_paths=local_package_paths,
-        extra_packages='pytest<=7.4.4, pdbpp',
+        extra_packages='pytest<=7.4.4, pdbpp==0.10.3',
         dep_versions_dict={
             'sqlalchemy': '1.4.54, 1.3.24',
             'pymysql': '1.0.2, 0.10.1, 0.9.3',
@@ -105,10 +105,10 @@ def create_test_environments():
     bh.tools.pyenv_create_venvs_for_py_versions_and_dep_versions(
         this_dir,
         py_versions='3.6.15',
-        pip_version='19.3',
+        pip_version='20.3.4',
         die=True,
         local_package_paths=local_package_paths,
-        extra_packages='pytest<=7.4.4, pdbpp',
+        extra_packages='pytest<=7.4.4, pdbpp==0.10.3',
     )
 
 
