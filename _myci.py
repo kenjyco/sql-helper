@@ -56,7 +56,7 @@ def create_test_environments():
 
     bh.tools.pyenv_create_venvs_for_py_versions_and_dep_versions(
         this_dir,
-        py_versions='3.8.20, 3.9.20, 3.10.15, 3.11.10, 3.12.7, 3.13.0',
+        py_versions='3.8.20, 3.9.20, 3.10.15, 3.11.10, 3.12.7, 3.13.5',
         die=True,
         local_package_paths=local_package_paths,
         extra_packages='pytest<=7.4.4, pdbpp',
@@ -83,7 +83,7 @@ def create_test_environments():
     # sqlalchemy 2 was not supported in python 3.13 until v2.0.31
     bh.tools.pyenv_create_venvs_for_py_versions_and_dep_versions(
         this_dir,
-        py_versions='3.13.0',
+        py_versions='3.13.5',
         die=True,
         local_package_paths=local_package_paths,
         extra_packages='pytest<=7.4.4, pdbpp',
@@ -96,7 +96,7 @@ def create_test_environments():
 
     bh.tools.pyenv_create_venvs_for_py_versions_and_dep_versions(
         this_dir,
-        py_versions='3.7.17, 3.8.20, 3.9.20, 3.10.15, 3.11.10, 3.12.7, 3.13.0',
+        py_versions='3.7.17, 3.8.20, 3.9.20, 3.10.15, 3.11.10, 3.12.7, 3.13.5',
         die=True,
         local_package_paths=local_package_paths,
         extra_packages='pytest<=7.4.4, pdbpp',
