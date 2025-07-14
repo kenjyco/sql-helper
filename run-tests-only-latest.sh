@@ -9,7 +9,7 @@ VENV_NAMES=(
     venv_py3.10.15
     venv_py3.11.10
     venv_py3.12.7
-    venv_py3.13.0
+    venv_py3.13.5
 )
 
 echo -e "\n\n\n\n\n\n\n\n\n"
