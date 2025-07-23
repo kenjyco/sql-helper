@@ -9,14 +9,14 @@ with open('requirements.txt', 'r') as fp:
 
 setup(
     name='sql-helper',
-    version='0.0.21',
+    version='0.1.0',
     description='Helper funcs and tools for working with SQL in mysql, postgresql, and more',
     long_description=long_description,
     author='Ken',
     author_email='kenjyco@gmail.com',
     license='MIT',
     url='https://github.com/kenjyco/sql-helper',
-    download_url='https://github.com/kenjyco/sql-helper/tarball/v0.0.21',
+    download_url='https://github.com/kenjyco/sql-helper/tarball/v0.1.0',
     packages=find_packages(),
     # setup_requires=['pytest-runner'],
     # tests_require=['pytest'],
